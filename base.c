@@ -54,6 +54,12 @@ void puts(const u8 *s) {
 void printf(const u8 *format, ...) {
 	u16 *ap = (u16 *)&format;
 	u8 *p = (u8 *)format;
+#ifdef __chibicc__
+	ap += 2;
+#define next_ap	(++ap)
+#else
+#define next_ap	(--ap)
+#endif
 	while (*p) {
 		u8 c[7];
 		u8 a, b, f, i, l, n, r, t, u;
@@ -67,13 +73,13 @@ void printf(const u8 *format, ...) {
 				case '%': putchar('%'); continue;
 				case '0': b = '0'; t = *p++; break;
 				case '-': l = 1; t = *p++; break;
-				case 'c': putchar(*(u16 *)--ap); continue;
+				case 'c': putchar(*next_ap); continue;
 			}
 			if (t >= '1' && t <= '9')
 				for (n = t - '0'; (t = *p++) >= '0' && t <= '9';)
 					n = 10 * n + t - '0';
 			if (t == 's')
-				for (q = *(u8 **)--ap, i = 0; q[i]; i++)
+				for (q = *(u8 **)next_ap, i = 0; q[i]; i++)
 					;
 			else {
 				if (u = t == 'u') t = *p++;
@@ -84,13 +90,14 @@ void printf(const u8 *format, ...) {
 					case 'X': r = 16; u = 1; a = 7; break;
 					default: continue;
 				}
-				v = *(u16 *)--ap;
+				v = *next_ap;
 				if (f = !u && (s16)v < 0) v = -v;
 				c[i = sizeof(c) - 1] = 0;
 				do {
-					u8 t = v % r + '0';
-					c[--i] = t > '9' ? t + a : t;
-				} while (v /= r);
+					u16 d = v / r, t1 = v - d * r + '0';
+					c[--i] = t1 > '9' ? t1 + a : t1;
+					v = d;
+				} while (v);
 				if (f) c[--i] = '-';
 				q = &c[i];
 			}
@@ -105,6 +112,7 @@ void printf(const u8 *format, ...) {
 			break;
 		}
 	}
+#undef next_ap
 }
 
 void cls(u8 graph) {
@@ -126,13 +134,13 @@ void locate(u8 x, u8 y) {
 	cursDraw();
 }
 
-void cursorOn() {
+void cursorOn(void) {
 	u8 l = cursActive;
 	cursActive = 1;
 	if (!l) cursDraw();
 }
 
-void cursorOff() {
+void cursorOff(void) {
 	if (cursActive) cursErase();
 	cursActive = 0;
 }

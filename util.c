@@ -6,7 +6,7 @@ void srand(u16 seed) {
 	rndv = seed;
 }
 
-u16 rand() { // xorshift
+u16 rand(void) { // xorshift
 	rndv = rndv ^ (rndv << 13);
 	rndv = rndv ^ (rndv >> 17);
 	rndv = rndv ^ (rndv << 5);

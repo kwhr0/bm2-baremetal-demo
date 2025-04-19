@@ -31,7 +31,7 @@ int main() {
 	puts("KEYBOARD TEST");
 	while (1) {
 		u8 c = keyDown(1);
-		if (c) putchar(c);
+		if (c) printf("\'%c\' 0x%02x %d\n", (int)c, (int)c, (int)c);
 	}
 #endif
 	return 0;
