@@ -1,6 +1,6 @@
 #CC = chibicc
-CC = cc68
 #CC = fcc
+CC = cc68
 MPU = 6800
 
 ifeq ($(CC),chibicc)
