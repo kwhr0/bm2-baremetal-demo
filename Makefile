@@ -1,17 +1,26 @@
 #CC = chibicc
 CC = cc68
+#CC = fcc
 MPU = 6800
 
 ifeq ($(CC),chibicc)
 AS = as6800
-OBJS = crt0-c.o memcpy.o memset.o
+OBJS = crt0-c.o
 CFLAGS = -I/opt/cc68/include
 LD = ld6800
 LIBC = /opt/chibicc/lib/libc.a
-else
+endif
+ifeq ($(CC),fcc)
+AS = as6800
+OBJS = crt0-f.o memcpy-f.o memset-f.o ret-f.o
+CFLAGS = -m$(MPU)
+LD = ld6800
+LIBC = /opt/fcc/lib/$(MPU)/lib$(MPU).a
+endif
+ifeq ($(CC),cc68)
 AS = as68
 OBJS = crt0.o
-CFLAGS = -m$(MPU) -I.
+CFLAGS = -DSTDARG_REV -m$(MPU)
 LD = ld68
 LIBC = /opt/cc68/lib/lib$(MPU).a
 endif
