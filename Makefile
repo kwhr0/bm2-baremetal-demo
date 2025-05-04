@@ -34,7 +34,7 @@ all: a.bin
 
 a.bin: $(OBJS)
 	$(LD) -b -C 0x$(START) -m a.map $^ $(LIBC)
-	dd if=a.out of=a.bin bs=0x$(START) skip=1 >/dev/null 2>&1
+	dd if=a.out of=a.bin bs=`echo "ibase=16;$(START)"|bc` skip=1 >/dev/null 2>&1
 	f9dasm -$(MPU) -offset $(START) a.bin > a.lst
 
 .asm.o:
