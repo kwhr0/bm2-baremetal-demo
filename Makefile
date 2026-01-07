@@ -1,6 +1,6 @@
-#CC = chibicc
+CC = chibicc
 #CC = fcc
-CC = cc68
+#CC = cc68
 MPU = 6800
 
 ifeq ($(CC),chibicc)
@@ -33,7 +33,7 @@ START = 4000
 all: a.bin
 
 a.bin: $(OBJS)
-	$(LD) -b -C 0x$(START) -m a.map $^ $(LIBC)
+	$(LD) -b -Z0xd4 -C 0x$(START) -m a.map $^ $(LIBC)
 	dd if=a.out of=a.bin bs=`echo "ibase=16;$(START)"|bc` skip=1 >/dev/null 2>&1
 	f9dasm -$(MPU) -offset $(START) a.bin > a.lst
 
